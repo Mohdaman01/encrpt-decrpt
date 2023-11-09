@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Connect to local MongoDB database
-mongoose.connect('mongodb://localhost:27017/timeseriesdb', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 //setting it to db
 const db = mongoose.connection;
