@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-time Data Display</title>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>Real-time Data Display</h1>
+  <div>
+    <p>Success Rate: <span id="successRate">0%</span></p>
+  </div>
+  <ul id="dataList"></ul>
+
+  <script>
+    const socket = io('http://localhost:3000');
+
+    let successCount = 0;
+    let totalCount = 0;
+
+    const successRateElement = document.getElementById('successRate');
+    const dataListElement = document.getElementById('dataList');
+
+    socket.on('savedData', (data) => {
+      try {
+        const parsedData = JSON.parse(data);
+        updateSuccessRate(true);
+        updateDataList(parsedData);
+      } catch (error) {
+        updateSuccessRate(false);
+        console.error('Error parsing data:', error);
+      }
+    });
+
+    function updateSuccessRate(success) {
+      if (success) {
+        successCount++;
+      }
+      totalCount++;
+
+      const successRate = ((successCount / totalCount) * 100).toFixed(2);
+      successRateElement.textContent = `${successRate}%`;
+    }
+
+    function updateDataList(data) {
+      const listItem = document.createElement('li');
+      listItem.textContent = `Name: ${data.name}, Origin: ${data.origin}, Destination: ${data.destination}, Timestamp: ${new Date(data.timestamp)}`;
+      dataListElement.appendChild(listItem);
+    }
+  </script>
+</body>
+</html>
+
