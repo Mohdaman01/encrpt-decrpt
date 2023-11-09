@@ -1,7 +1,7 @@
 const io = require('socket.io-client');
 const crypto = require('crypto');
 
-const socket = io('http://localhost:3000'); 
+const socket = io('http://localhost:3000');
 
 const data = {
     names: [
@@ -235,19 +235,17 @@ const secretKey = crypto.createHash('sha256').update('encript').digest('hex'); /
 const iv = crypto.randomBytes(16);
 
 function encrypt(text) {
-  const cipher = crypto.createCipheriv(algorithm, Buffer.from(secretKey,'hex'), iv); // Use secretKey with the correct case
-  const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
-  return { iv: iv.toString('hex'), encryptedData: encrypted.toString('hex') };
+    const cipher = crypto.createCipheriv(algorithm, Buffer.from(secretKey, 'hex'), iv); // Use secretKey with the correct case
+    const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
+    return { iv: iv.toString('hex'), encryptedData: encrypted.toString('hex') };
 }
 
 function generateEncryptedMessage() {
-    const numMessages = Math.floor(Math.random() * (499 - 49 + 1)) + 49;
 
-    for (let i = 0; i < numMessages; i++) {
-        const message = generateRandomData();
-        const encryptedMessage = encrypt(JSON.stringify(message));
-        socket.emit('incomingData', encryptedMessage);
-    }
+    const message = generateRandomData();
+    const encryptedMessage = encrypt(JSON.stringify(message));
+    socket.emit('incomingData', encryptedMessage);
+
 }
 
 

@@ -14,13 +14,14 @@ const io = socketIO(server);
 // Encryption and decryption functions 
 const algorithm = 'aes-256-ctr';
 const secretKey = crypto.createHash('sha256').update('encript').digest('hex');
-// const iv = crypto.randomBytes(16);
 
 
 function decrypt(text, iv) {
+
     const decipher = crypto.createDecipheriv(algorithm, Buffer.from(secretKey, 'hex'), Buffer.from(iv, 'hex'));
-  const decrypted = Buffer.concat([decipher.update(Buffer.from(text, 'hex')), decipher.final()]);
-  return decrypted.toString('utf8');
+    const decrypted = Buffer.concat([decipher.update(Buffer.from(text, 'hex')), decipher.final()]);
+    return decrypted.toString('utf8');
+    
 }
 
 // Socket.io connection
@@ -28,12 +29,12 @@ io.on('connection', (socket) => {
     console.log('A user connected');
 
     // Listen for incoming encrypted data stream
-    socket.on('incomingData', ({encryptedData, iv}) => {
+    socket.on('incomingData', ({ encryptedData, iv }) => {
         try {
             // Decrypt the data
             const decryptedData = decrypt(encryptedData, iv);
             const parsedData = JSON.parse(decryptedData);
- 
+
             // Validate data integrity using secret_key
             const { name, origin, destination, secretKey } = parsedData;
             const calculatedSecretKey = crypto.createHash('sha256').update(`${name}${origin}${destination}`).digest('hex');
