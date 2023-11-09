@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const http = require('http');
 const socketIO = require('socket.io');
 const crypto = require('crypto');
@@ -11,6 +12,9 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+  });
 // Encryption and decryption functions 
 const algorithm = 'aes-256-ctr';
 const secretKey = crypto.createHash('sha256').update('encript').digest('hex');
@@ -21,7 +25,7 @@ function decrypt(text, iv) {
     const decipher = crypto.createDecipheriv(algorithm, Buffer.from(secretKey, 'hex'), Buffer.from(iv, 'hex'));
     const decrypted = Buffer.concat([decipher.update(Buffer.from(text, 'hex')), decipher.final()]);
     return decrypted.toString('utf8');
-    
+
 }
 
 // Socket.io connection
@@ -66,5 +70,5 @@ io.on('connection', (socket) => {
 // Start the server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on: http://localhost:${PORT}`); 
 });
